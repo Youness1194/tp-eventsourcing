@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: es-postgres
+    environment:
+      POSTGRES_DB: account_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: "1234"
+    ports:
+      - "5432:5432"
+    volumes:
+      - es-postgres-data:/var/lib/postgresql/data
+    networks:
+      - es-net
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: es-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8088:80"
+    depends_on:
+      - postgres
+    networks:
+      - es-net
+
+  axonserver:
+    image: docker.axoniq.io/axoniq/axonserver:latest
+    container_name: es-axonserver
+    environment:
+      - AXONIQ_AXONSERVER_STANDALONE=true
+    ports:
+      - "8024:8024"
+      - "8124:8124"
+    volumes:
+      - axon-data:/axonserver/data
+      - axon-events:/axonserver/events
+    networks:
+      - es-net
+
+volumes:
+  es-postgres-data:
+  axon-data:
+  axon-events:
+
+networks:
+  es-net:
