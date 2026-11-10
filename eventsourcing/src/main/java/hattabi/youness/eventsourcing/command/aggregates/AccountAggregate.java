@@ -22,6 +22,7 @@ public class AccountAggregate {
     protected AccountAggregate() {
     }
 
+    @CommandHandler
     public AccountAggregate(AddAccountCommand command) {
         log.info("AddAccountCommand received");
         if (command.initialBalance() <= 0) {
