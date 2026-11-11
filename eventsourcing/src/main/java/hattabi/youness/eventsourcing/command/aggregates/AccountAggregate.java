@@ -48,6 +48,7 @@ public class AccountAggregate {
         this.status = event.status();
     }
 
+    @CommandHandler
     public void handle(CreditAccountCommand command) {
         log.info("CreditAccountCommand received");
         if (status != AccountStatus.ACTIVATED) {
@@ -66,6 +67,7 @@ public class AccountAggregate {
         this.balance += event.amount();
     }
 
+    @CommandHandler
     public void handle(DebitAccountCommand command) {
         log.info("DebitAccountCommand received");
         if (status != AccountStatus.ACTIVATED) {
