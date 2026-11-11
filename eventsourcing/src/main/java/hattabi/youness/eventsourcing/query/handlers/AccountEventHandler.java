@@ -6,9 +6,11 @@ import hattabi.youness.eventsourcing.query.entities.Account;
 import hattabi.youness.eventsourcing.query.entities.AccountOperation;
 import hattabi.youness.eventsourcing.query.repositories.AccountOperationRepository;
 import hattabi.youness.eventsourcing.query.repositories.AccountRepository;
+import hattabi.youness.eventsourcing.query.queries.WatchEventQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.eventhandling.Timestamp;
+import org.axonframework.queryhandling.QueryUpdateEmitter;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -19,11 +21,14 @@ public class AccountEventHandler {
 
     private final AccountRepository accountRepository;
     private final AccountOperationRepository operationRepository;
+    private final QueryUpdateEmitter queryUpdateEmitter;
 
     public AccountEventHandler(AccountRepository accountRepository,
-            AccountOperationRepository operationRepository) {
+            AccountOperationRepository operationRepository,
+            QueryUpdateEmitter queryUpdateEmitter) {
         this.accountRepository = accountRepository;
         this.operationRepository = operationRepository;
+        this.queryUpdateEmitter = queryUpdateEmitter;
     }
 
     @EventHandler
@@ -67,6 +72,10 @@ public class AccountEventHandler {
                 .build());
         account.setBalance(account.getBalance() - operation.getAmount());
         accountRepository.save(account);
+        queryUpdateEmitter.emit(
+                WatchEventQuery.class,
+                query -> query.accountId().equals(event.accountId()),
+                operation);
     }
 
     @EventHandler
@@ -82,5 +91,9 @@ public class AccountEventHandler {
                 .build());
         account.setBalance(account.getBalance() + operation.getAmount());
         accountRepository.save(account);
+        queryUpdateEmitter.emit(
+                WatchEventQuery.class,
+                query -> query.accountId().equals(event.accountId()),
+                operation);
     }
 }
