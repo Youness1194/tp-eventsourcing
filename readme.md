@@ -1,7 +1,6 @@
 # Rapport de Travaux Pratiques : Event Sourcing et CQRS avec Spring Boot, Axon Framework et Axon Server
 
 **Filière :** GLSID — Génie du Logiciel et des Systèmes Informatiques Distribués  
-**Encadrant :** [Nom de l'encadrant]  
 **Étudiant :** Youness HATTABI
 
 ---
